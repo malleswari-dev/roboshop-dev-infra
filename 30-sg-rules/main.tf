@@ -14,6 +14,6 @@ resource "aws_security_group_rule" "bastion_laptop" {
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"] # Replace with your public IP address
-  security_group_id = local.bastion_sg.id
+  security_group_id = local.bastion_sg_id
   
 }
