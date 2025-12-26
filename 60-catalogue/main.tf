@@ -1,3 +1,4 @@
+# create ec2 instance
 resource "aws_instance" "catalogue" {
   ami           =  local.ami_id
   instance_type =  "t3.micro"
@@ -12,6 +13,7 @@ resource "aws_instance" "catalogue" {
 }
 
 # Connect to instance using remote-exec provisioner through terraform_data
+# configure using ansibel
 
 resource "terraform_data" "catalogue" {
   triggers_replace = [
@@ -38,3 +40,27 @@ resource "terraform_data" "catalogue" {
 
   }
 }  
+
+# stop instance to take image
+resource "aws_ec2_instance_state" "catalogue" {
+  instance_id = aws_instance.catalogue.id
+  state       = "stopped"
+  depends_on = [terraform_data.catalogue]
+}
+
+# take ami
+resource "aws_ami_from_instance" "example" {
+  name               = "${local.common_name_suffix}-catalogue-ami" #roboshop-dev-catalogue-ami
+  source_instance_id = aws_instance.catalogue.id
+  depends_on = [aws_ec2_instance_state.catalogue]
+  tags = merge (
+        local.common_tags,
+        {
+            Name = "${local.common_name_suffix}-catalogue-ami" # roboshop-dev-catalogue-ami
+        }
+  )
+}
+
+
+
+
