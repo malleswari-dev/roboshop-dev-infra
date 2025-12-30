@@ -85,3 +85,12 @@ resource "aws_security_group_rule" "catalogue_backend_alb" {
   security_group_id = local.catalogue_sg_id
   
 }
+
+resource "aws_security_group_rule" "frontend_alb_public" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"] # Replace with your public IP address
+  security_group_id = local.frontend_alb_sg_id
+}
