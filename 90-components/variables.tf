@@ -6,7 +6,7 @@
   
 # }
 
-variable "components" {
+variable "component" {
     default = {
         catalogue = {
             rule_priority = 10
