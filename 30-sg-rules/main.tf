@@ -285,14 +285,15 @@ resource "aws_security_group_rule" "bastion_laptop" {
   
 }
 
+### vpn sg rules###
+
 resource "aws_security_group_rule" "openvpn_public" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"] # Replace with your public IP address
-  security_group_id = local.openvpn_sg_id
-  
+  security_group_id = local.openvpn_sg_id 
 }
 
 resource "aws_security_group_rule" "openvpn_943" {
@@ -302,7 +303,6 @@ resource "aws_security_group_rule" "openvpn_943" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"] # Replace with your public IP address
   security_group_id = local.openvpn_sg_id
-  
 }
 resource "aws_security_group_rule" "openvpn_443" {
   type              = "ingress"
@@ -311,7 +311,6 @@ resource "aws_security_group_rule" "openvpn_443" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"] # Replace with your public IP address
   security_group_id = local.openvpn_sg_id
-  
 }
 resource "aws_security_group_rule" "openvpn_1194" {
   type              = "ingress"
@@ -320,9 +319,37 @@ resource "aws_security_group_rule" "openvpn_1194" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"] # Replace with your public IP address
   security_group_id = local.openvpn_sg_id
-  
 }
 
+# resource "aws_security_group_rule" "catalogue_openvpn" {
+#   type              = "ingress"
+#   from_port         = 22
+#   to_port           = 22
+#   protocol          = "tcp"
+#   source_security_group_id = local.openvpn_sg_id 
+#   security_group_id = local.catalogue_sg_id
+  
+# }
+
+# resource "aws_security_group_rule" "catalogue_openvpn_8080" {
+#   type              = "ingress"
+#   from_port         = 8080
+#   to_port           = 8080
+#   protocol          = "tcp"
+#   source_security_group_id = local.openvpn_sg_id 
+#   security_group_id = local.catalogue_sg_id
+  
+# }
+
+resource "aws_security_group_rule" "components_vpn" {
+  for_each = local.vpn_ingress_rules
+  type              = "ingress"
+  security_group_id = each.value.sg_id
+  source_security_group_id = local.openvpn_sg_id
+  from_port         = each.value.port
+  protocol          = "tcp"
+  to_port           = each.value.port
+}
 
 
 
